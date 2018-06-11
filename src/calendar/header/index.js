@@ -18,7 +18,8 @@ class CalendarHeader extends Component {
     hideDayNames: PropTypes.bool,
     weekNumbers: PropTypes.bool,
     onPressArrowLeft: PropTypes.func,
-    onPressArrowRight: PropTypes.func
+    onPressArrowRight: PropTypes.func,
+    customHeaderText: PropTypes.func
   };
 
   constructor(props) {
@@ -55,16 +56,16 @@ class CalendarHeader extends Component {
   }
 
   onPressLeft() {
-    const {onPressArrowLeft} = this.props;
-    if(typeof onPressArrowLeft === 'function') {
+    const { onPressArrowLeft } = this.props;
+    if (typeof onPressArrowLeft === 'function') {
       return onPressArrowLeft(this.substractMonth);
     }
     return this.substractMonth();
   }
 
   onPressRight() {
-    const {onPressArrowRight} = this.props;
-    if(typeof onPressArrowRight === 'function') {
+    const { onPressArrowRight } = this.props;
+    if (typeof onPressArrowRight === 'function') {
       return onPressArrowRight(this.addMonth);
     }
     return this.addMonth();
@@ -79,28 +80,32 @@ class CalendarHeader extends Component {
         <TouchableOpacity
           onPress={this.onPressLeft}
           style={this.style.arrow}
-          hitSlop={{left: 20, right: 20, top: 20, bottom: 20}}
+          hitSlop={{ left: 20, right: 20, top: 20, bottom: 20 }}
         >
-          {this.props.renderArrow
-            ? this.props.renderArrow('left')
-            : <Image
-                source={require('../img/previous.png')}
-                style={this.style.arrowImage}
-              />}
+          {this.props.renderArrow ? (
+            this.props.renderArrow('left')
+          ) : (
+            <Image
+              source={require('../img/previous.png')}
+              style={this.style.arrowImage}
+            />
+          )}
         </TouchableOpacity>
       );
       rightArrow = (
         <TouchableOpacity
           onPress={this.onPressRight}
           style={this.style.arrow}
-          hitSlop={{left: 20, right: 20, top: 20, bottom: 20}}
+          hitSlop={{ left: 20, right: 20, top: 20, bottom: 20 }}
         >
-          {this.props.renderArrow
-            ? this.props.renderArrow('right')
-            : <Image
-                source={require('../img/next.png')}
-                style={this.style.arrowImage}
-              />}
+          {this.props.renderArrow ? (
+            this.props.renderArrow('right')
+          ) : (
+            <Image
+              source={require('../img/next.png')}
+              style={this.style.arrowImage}
+            />
+          )}
         </TouchableOpacity>
       );
     }
@@ -108,27 +113,52 @@ class CalendarHeader extends Component {
     if (this.props.showIndicator) {
       indicator = <ActivityIndicator />;
     }
+    let monthText;
+    if (
+      this.props.customHeaderText &&
+      typeof this.props.customHeaderText === 'function'
+    ) {
+      monthText = this.props.customHeaderText(this.props.month);
+    } else {
+      monthText = this.props.month.toString(
+        this.props.monthFormat ? this.props.monthFormat : 'MMMM yyyy'
+      );
+    }
     return (
       <View>
         <View style={this.style.header}>
           {leftArrow}
           <View style={{ flexDirection: 'row' }}>
-            <Text allowFontScaling={false} style={this.style.monthText} accessibilityTraits='header'>
-              {this.props.month.toString(this.props.monthFormat ? this.props.monthFormat : 'MMMM yyyy')}
+            <Text
+              allowFontScaling={false}
+              style={this.style.monthText}
+              accessibilityTraits="header"
+            >
+              {monthText}
             </Text>
             {indicator}
           </View>
           {rightArrow}
         </View>
-        {
-          !this.props.hideDayNames &&
+        {!this.props.hideDayNames && (
           <View style={this.style.week}>
-            {this.props.weekNumbers && <Text allowFontScaling={false} style={this.style.dayHeader}></Text>}
+            {this.props.weekNumbers && (
+              <Text allowFontScaling={false} style={this.style.dayHeader} />
+            )}
             {weekDaysNames.map((day, idx) => (
-              <Text allowFontScaling={false} key={idx} accessible={false} style={this.style.dayHeader} numberOfLines={1} importantForAccessibility='no'>{day}</Text>
+              <Text
+                allowFontScaling={false}
+                key={idx}
+                accessible={false}
+                style={this.style.dayHeader}
+                numberOfLines={1}
+                importantForAccessibility="no"
+              >
+                {day}
+              </Text>
             ))}
           </View>
-        }
+        )}
       </View>
     );
   }
