@@ -140,6 +140,12 @@ class CalendarHeader extends Component {
           </View>
           {rightArrow}
         </View>
+        <View
+          style={{
+            backgroundColor: '#AAA',
+            height: 1
+          }}
+        />
         {!this.props.hideDayNames && (
           <View style={this.style.week}>
             {this.props.weekNumbers && (
